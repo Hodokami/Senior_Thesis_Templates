@@ -1,0 +1,221 @@
+% RUN latexmk -lualatex
+% もっとLuaLaTeXを使いなさいの考えからLuaLaTeX + BibLaTeXでフォーマットを合わせるべくそれなりの無茶をしている。
+% 特に拘りがないならあぴす(@apissQX70)氏のテンプレートをちょっとカスタムするのが楽かと。
+% Thesis style REF: https://github.com/apiss2/master_thesis_tmplete
+
+\documentclass[a4paper, book, twoside, openany, fontsize = 11pt, gutter = 3cm]{jlreq}
+	% Settings for jlreq style
+		\jlreqsetup
+		{
+			appendix_counter = {
+				section = {value = 0}
+			},
+		}
+		\ModifyPageStyle{plain} % jlreq setting
+		{
+			nombre_position = top-right % ノンブル位置　右肩=右上?
+		}
+
+	% 基礎科学実験Aの置物 Memo
+		% 1: \rmは非推奨。\mathrmが望ましい。
+		% 2: center環境は非推奨。\centeringが望ましい。
+		% 3: eqnarray環境はamsmathが対応していない。amsmathはalign環境を使用。
+
+	% Packages
+		\usepackage{url} % URL typeset
+		\usepackage{amsmath, amssymb}
+		\usepackage{mathtools}
+		\usepackage{here} % Force position with [H]
+		\usepackage{graphicx} % for pictures. LuaLaTex don't use dvipdfmx.
+		\usepackage{bm} % short \boldsymbol{}
+		\usepackage[subrefformat=parens]{subcaption}
+		\usepackage{enumitem}
+		\usepackage[backend=biber, sorting=none, bibencoding=utf8, style=ieee, doi=false, isbn=false]{biblatex}
+		% WARNING: bliography use bibLAtex NOT bibtex
+		\usepackage[framed, numbered, autolinebreaks]{mcode} % for MATLAB Source
+		% mcode REF:https://ssr-yuki.hatenablog.com/entry/2019/04/15/162517
+		\usepackage[T1]{fontenc} % Latin Modern
+		\usepackage{lmodern} % Latin Modern
+		\usepackage[pdfencoding=auto, bookmarksnumbered=true, hidelinks]{hyperref} % Links on PDF
+
+	% Def Commands
+		\newcommand{\eeqref}{式~\eqref}
+		\newcommand{\tbref}{表~\ref}
+		\newcommand{\figref}{図~\ref}
+		\newcommand{\lisref}{ソースコード~\ref}
+		\newcommand{\secref}[1]{\ref{#1}節}
+		\newcommand{\chapref}[1]{第\ref{#1}章}
+		\renewcommand{\lstlistingname}{ソースコード}
+		\DeclareMathOperator{\sinc}{sinc} % needs amsmath
+	
+	% BibLatex Settings
+		% \renewbibmacro{in:}{} % In: Journal... to . Journal...
+		\DeclareFieldFormat*{volume}{#1} % renove vol.
+		\DeclareFieldFormat[article]{number}{#1} % remove no.
+		\DeclareFieldFormat{journaltitle}{\textit{#1}} % Cancel Japanese jurnaltitle Bold
+		\DeclareFieldFormat{title}{#1} % Cancel Japanese title Bold
+		\renewbibmacro*{volume+number+eid} % set vol(no)
+		{
+			\textbf{\printfield{volume}} % no punctuation between
+			\printtext[parens]{\printfield{number}} % volume and number fields
+			\setunit{\bibeidpunct}
+			\printfield{eid}
+		}
+		% \renewbibmacro*{title-in-maintitle} % Cancel book title Bold
+		% {
+  		% 	\ifboolexpr
+		% 	{
+   		% 		test {\iffieldundef{title}}
+    	% 		and
+    	% 		test {\iffieldundef{subtitle}}
+  		% 	}
+   		% 	{}
+    	% 	{
+      	% 		\printtext[title]
+		% 		{%
+    	% 			\printfield{title}%
+        % 			\setunit{\subtitlepunct}%
+        % 			\printfield{subtitle}%
+      	% 		}%
+      	% 		\newunit
+    	% 	}%
+		% }
+		% \renewbibmacro*{date} % yyyy to (yyyy)
+		% {
+		% 	\iffieldundef{year}
+		% 	{}
+		% 	{
+		% 		\printtext[parens]{\printfield{year}}
+		% 	}
+		% }
+		
+		\addbibresource{References.bib} % biblatex: bib file
+
+	% Other Settings
+		% \mathtoolsset{showonlyrefs=true} % refされない数式=番号なし
+		\setcounter{tocdepth}{2} % include subsection to TOC
+
+	% set title
+		\title{
+			令和n年度 卒業論文 \\
+			\huge{タイトル\\が長い時\vspace{280pt}} % 題目　+ 余白
+		}
+		\author{
+			電気通信大学 情報理工学域
+			% I類
+			% I\hspace{-1.2pt}I類 % II類って書きたい
+			I\hspace{-1.2pt}I\hspace{-1.2pt}I類 % III類って書きたい
+			なんとかプログラム \\ 
+			0000000 電通 花子 \\
+			指導教員 電通 太郎 教授
+		}
+		\date{提出日 令和n年 1月 31日}
+
+\begin{document}
+	\frontmatter
+		\maketitle
+		\tableofcontents
+
+	\mainmatter
+		% MARK: Introduction
+		\chapter{序論}
+			\section{目的}
+				本研究の目的は云々
+
+			\section{本論文の構成}
+				本論文は全\ref{chap:conclusion}章で構成されている。
+				\chapref{chap:principle}で原理について述べる。
+				\chapref{chap:experiment}で実験について述べる。
+				\chapref{chap:conclusion}では本論文のまとめを述べる。
+
+		% MARK: Principle
+		\chapter{原理} \label{chap:principle}
+			\section{原理1}
+				これは\eeqref{eq:einstein}に従う。
+				\begin{align}
+					E = mc^2 \label{eq:einstein}
+				\end{align}
+				\subsection{原理1-1}
+					これの原理はこう\cite{uec.ac.jp:sotsuron_example}です。
+					\begin{align}
+						\sinc x % sinc関数をぷりアンブルで定義してるのでこんなことができたり。
+					\end{align}
+
+			\section{原理2}
+				これの原理はこうです。
+				\begin{figure}[H]
+					\centering
+					\includegraphics[width=0.5\columnwidth]{image.png}
+					\caption{イメージ}
+					\label{fig:image}
+				\end{figure}
+
+		% MARK: Experiment
+		\chapter{実験} \label{chap:experiment}
+			\section{実験器具及び実験環境}
+				\subsection{実験器具}
+					\begin{itemize}
+						\item 実験
+						\item 器具
+						\item 一覧
+					\end{itemize}
+
+			% MARK: Ex1
+			\section{実験1}
+				付録\ref{sec:matlabscript}に示す\lisref{matlabscript}を用いて実験した。
+				結果を\tbref{tb:kekka}に示す。
+				\begin{table}[H]
+					\centering
+					\caption{}
+					\label{tb:kekka}
+					\begin{tabular}{c|c}
+						\hline
+						A & B \\
+						\hline
+						$0.0$ & $0.0$ \\
+						$0.0$ & $0.0$ \\
+						\hline
+					\end{tabular}
+				\end{table}
+				また\figref{fig:images}に示す。
+				\begin{figure}[H]
+					\centering
+					\begin{minipage}[b]{0.45\columnwidth}
+						\centering
+						\includegraphics[width=0.96\columnwidth]{image.png}
+						\subcaption{A}
+						\label{fig:image1}
+					\end{minipage}
+					\begin{minipage}[b]{0.45\columnwidth}
+						\centering
+						\includegraphics[width=0.96\columnwidth]{image.png}
+						\subcaption{B}
+						\label{fig:image2}
+					\end{minipage}
+					\caption{イメージ}
+					\label{fig:images}
+				\end{figure}
+				\figref{fig:image1}に対して、\figref{fig:image2}は云々。
+
+		% MARK: Conclusion
+		\chapter{結論} \label{chap:conclusion}
+			という結論となった。
+
+			今後の課題として、これが挙げられる。
+
+	\backmatter
+		\nocite{bib-example} % biblatex: 引用しない文献を表示
+
+		\printbibliography[title=参考文献] % biblatex
+		\chapter{謝辞}
+			本研究を行うにあたって、
+			1年間指導してくださった電通太郎教授に深く感謝いたします。
+			また研究室の活動で大変お世話になった方々
+			に心から感謝いたします。
+
+		\appendix
+		\chapter{付録}
+			\section{MATLABスクリプト} \label{sec:matlabscript}
+				\lstinputlisting[caption={MATLABスクリプト},label=matlabscript,captionpos=b]{matlabscript.m}
+
+\end{document}
